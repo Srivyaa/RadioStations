@@ -4,7 +4,7 @@
     "stationuuid": "00000001-1111-0000-0000-000000000001",
     "serveruuid": "00000001-2222-0000-0000-000000000001",
     "name": "KC TV",
-    "url": "https://rtmp.bmlive.net/bms/kctv/stream.m3u8",
+    "url": "https://live.olidigital.in/olitv/olitv/index.m3u8",
     "url_resolved": "",
     "homepage": "",
     "favicon": "",
