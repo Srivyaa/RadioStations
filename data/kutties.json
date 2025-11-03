@@ -323,12 +323,12 @@
         "changeuuid": "b29b286b-de11-43e5-9dde-29db48b9d84d",
         "stationuuid": "7e4d6d58-9935-46af-a7c1-7975e9fa46b7",
         "serveruuid": "6311c228-05d4-44c0-83c1-1bc509c970c1",
-        "name": "Daddy Song (Johny Johny Yes Paapa)",
-        "url": "http://www.friendstamilmp3.in/songs2/A-Z%20Movie%20Songs/Veetla%20Vishesham%20(2022)/Daddy%20Song%20(Johny%20Johny%20Yes%20Paapa).mp3",
-        "url_resolved": "http://www.friendstamilmp3.in/songs2/A-Z%20Movie%20Songs/Veetla%20Vishesham%20(2022)/Daddy%20Song%20(Johny%20Johny%20Yes%20Paapa).mp3",
+        "name": "Paapa Paatu",
+        "url": "http://www.friendstamilmp3.in/songs2/A-Z%20Movie%20Songs/Veetla%20Vishesham%20(2022)/Paapa%20Paattu%20(Vaa%20Vennilave%20Vaadatha%20Poove).mp3",
+        "url_resolved": "http://www.friendstamilmp3.in/songs2/A-Z%20Movie%20Songs/Veetla%20Vishesham%20(2022)/Paapa%20Paattu%20(Vaa%20Vennilave%20Vaadatha%20Poove).mp3",
         "homepage": "http://www.friendstamilmp3.in",
         "favicon": "http://www.friendstamilmp3.in/images/fav2.png",
-        "tags": "A-Z Movie Songs;Veetla Vishesham (2022);Daddy Song (Johny Johny Yes Paapa)",
+        "tags": "A-Z Movie Songs;Veetla Vishesham (2022);Paapa Song (Johny Johny Yes Paapa);Paapa; Paatu",
         "country": "User Defined (KUTTIES)",
         "countrycode": "KUTTIES",
         "iso_3166_2": "",
@@ -340,7 +340,7 @@
         "lastchangetime_iso8601": "2025-11-03T23:19:25Z",
         "codec": "MPEG",
         "bitrate": 0,
-        "file_name_from_url": "Daddy Song (Johny Johny Yes Paapa).mp3",
+        "file_name_from_url": "Paapa Paatu",
         "hls": 0,
         "lastcheckok": 1,
         "lastchecktime": "2025-11-03 23:19:25",
@@ -439,4 +439,5 @@
         "geo_distance": null,
         "has_extended_info": false
     }
+
 ]
