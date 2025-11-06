@@ -1,0 +1,39 @@
+name: Validate Radio Streams
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual triggering
+  push:
+    paths:
+      - 'data/**'
+
+jobs:
+  validate-streams:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        
+    - name: Run stream validator
+      run: |
+        python scripts/link_validator.py
+        
+    - name: Commit and push updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/ broken_links/
+        git commit -m "Update: Remove broken streams and generate report [skip ci]" || exit 0
+        git push
