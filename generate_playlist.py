@@ -10,14 +10,19 @@ REPO_NAME = "RadioStations"
 REPO_BRANCH = "main"
 DATA_PATH = "data"
 OUTPUT_FILENAME = "working_stations.m3u"
-# Timeout (in seconds) for link validation. Streaming links often take time to start, 
-# so a short timeout ensures a quick check without downloading the whole stream.
+# Timeout (in seconds) for link validation.
 LINK_CHECK_TIMEOUT = 10 
+# Prefixes to ignore (case-sensitive)
+EXCLUDED_PREFIXES = ("mp3", "samadada") 
 # ---
 
 def get_file_list(token=None):
-    """Fetches the list of JSON files in the data directory and applies the filename filter (length > 3)."""
-    # Uses the GitHub Content API to list files in the directory
+    """
+    Fetches the list of JSON files in the data directory and applies filters:
+    1. Must be a .json file.
+    2. Base name length must be > 3 characters.
+    3. Base name must NOT start with any of the EXCLUDED_PREFIXES.
+    """
     url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{DATA_PATH}?ref={REPO_BRANCH}"
     headers = {}
     if token:
@@ -33,10 +38,25 @@ def get_file_list(token=None):
     for file_info in all_files:
         if file_info.get('type') == 'file' and file_info.get('name', '').endswith('.json'):
             filename = file_info['name']
-            basename = filename.replace('.json', '')
+            
+            # Extract the base name (filename without .json extension)
+            basename = os.path.splitext(filename)[0] 
+            
+            # --- NEW & UPDATED FILTERING LOGIC ---
+            
             # Filter 1: File name must have more than 3 characters (excluding .json)
-            if len(basename) > 3:
-                json_files.append(filename)
+            if len(basename) <= 3:
+                # print(f"  -> Skipping {filename}: Name too short.")
+                continue 
+            
+            # Filter 2: File name must NOT start with any excluded prefix
+            if basename.startswith(EXCLUDED_PREFIXES):
+                print(f"  -> Skipping {filename}: Starts with excluded prefix {basename[:len(EXCLUDED_PREFIXES[0])]}...")
+                continue
+            
+            # --- END FILTERING LOGIC ---
+            
+            json_files.append(filename)
     
     return json_files
 
@@ -50,24 +70,19 @@ def fetch_json_content(filename):
 
 def validate_stream_link(url):
     """Checks if a streaming URL is reachable using a small GET request."""
-    # Note: We use a small GET request (stream=True) instead of a HEAD request 
-    # because many streaming servers are configured to reject HEAD requests.
     try:
         r = requests.get(url, timeout=LINK_CHECK_TIMEOUT, stream=True, allow_redirects=True)
         r.raise_for_status() # Raise exception for bad status codes (4xx or 5xx)
         r.close()
         return True
             
-    except requests.exceptions.RequestException as e:
-        # print(f"    - Link check failed for {url}: {e}") # Log only if needed
+    except requests.exceptions.RequestException:
         return False
-    except Exception as e:
-        # print(f"    - Unexpected error for {url}: {e}") # Log only if needed
+    except Exception:
         return False
 
 def generate_m3u_entry(station, filename):
     """Creates an M3U extended format entry (#EXTINF) from station data."""
-    # Assuming the station object has 'name', 'url', and 'tags' or 'country'
     name = station.get('name', 'Unknown Name')
     url = station.get('url')
     # Use 'tags' or 'country' for group-title, falling back to the filename's basename
@@ -76,7 +91,7 @@ def generate_m3u_entry(station, filename):
     if not url:
         return None, None
 
-    # Clean up group name for M3U format (handle list/string and common separators)
+    # Clean up group name for M3U format
     group_clean = group[0] if isinstance(group, list) else group
     group_clean = str(group_clean).replace(',', ';').replace('"', '').strip()
 
@@ -94,7 +109,7 @@ def main():
     try:
         # 1. Get filtered list of JSON files
         json_files = get_file_list()
-        print(f"\nFound {len(json_files)} JSON files matching criteria (name length > 3).")
+        print(f"\nFound {len(json_files)} JSON files matching all criteria.")
         
         if not json_files:
             print("No files to process. Exiting.")
@@ -110,7 +125,7 @@ def main():
                 continue
 
             if not isinstance(stations, list):
-                print(f"  !! Expected a list of stations in {filename}, but found {type(stations)}. Skipping.")
+                print(f"  !! Expected a list of stations in {filename}. Skipping.")
                 continue
 
             # 3. Validate links and generate M3U entries
@@ -122,7 +137,7 @@ def main():
                     if validate_stream_link(url):
                         working_links_m3u.append(m3u_entry)
                         working_links_count += 1
-                        print(f"    - SUCCESS: {station.get('name', 'Unknown')} ({url})")
+                        # print(f"    - SUCCESS: {station.get('name', 'Unknown')} ({url})")
                     # Delay to avoid hitting rate limits too quickly on streaming servers
                     sleep(0.1) 
                 
