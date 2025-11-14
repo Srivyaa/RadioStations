@@ -17,6 +17,10 @@ on:
 jobs:
   generate-playlist:
     runs-on: ubuntu-latest
+
+    # ⭐ ADD THIS PERMISSIONS BLOCK ⭐
+    permissions:
+      contents: write  # This grants the GITHUB_TOKEN write access
     steps:
       - name: 1. Checkout repository
         # Action to pull the code to the runner
